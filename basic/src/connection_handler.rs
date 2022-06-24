@@ -2,6 +2,9 @@ pub mod connection_handler {
     use std::fs;
     use std::net::TcpStream;
     use std::io::prelude::*;
+    use std::thread;
+    use std::time::Duration;
+
     
     pub struct ConnectionHandler {}
     
@@ -12,9 +15,13 @@ pub mod connection_handler {
 
         fn request_handler(&self, buffer: &[u8]) -> String {
             let get = b"GET / HTTP/1.1\r\n";
+            let sleep = b"GET /sleep HTTP/1.1\r\n";
 
             let (status_line, filename) = if buffer.starts_with(get) {
                 ("HTTP/1.1 200 OK", "hello.html")
+            } else if buffer.starts_with(sleep) {
+                thread::sleep(Duration::from_secs(5));
+                ("HTTP/1.,1 200 OK", "hello.html")
             } else {
                 ("HTTP/1.1 404 Not Found", "404.html")
             };
