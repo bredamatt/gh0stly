@@ -12,21 +12,20 @@ pub mod connection_handler {
 
         fn request_handler(&self, buffer: &[u8]) -> String {
             let get = b"GET / HTTP/1.1\r\n";
-            if buffer.starts_with(get) {
-                let contents = fs::read_to_string("hello.html").unwrap();
-                let response = format!(
-                    "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
-                    contents.len(), contents
-                );
-                response
+
+            let (status_line, filename) = if buffer.starts_with(get) {
+                ("HTTP/1.1 200 OK", "hello.html")
             } else {
-                let contents = fs::read_to_string("404.html").unwrap();
-                let response = format!(
-                    "HTTP/1.1 404 NOT FOUND\r\nContent-Length: {}\r\n\r\n{}",
-                    contents.len(), contents
-                );
-                response
-            }
+                ("HTTP/1.1 404 Not Found", "404.html")
+            };
+            
+            let contents = fs::read_to_string(filename).unwrap();
+            let response = format!(
+                "{}\r\nContent-Length: {}\r\n\r\n{}", 
+                status_line, contents.len(), contents,
+            );
+
+            response
         }
 
         pub fn handle_connection(&self, mut stream: TcpStream) {
