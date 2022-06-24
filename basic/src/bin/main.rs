@@ -1,8 +1,6 @@
-mod connection_handler;
-
 use std::net::TcpListener;
-use threadpool::ThreadPool;
-use connection_handler::connection_handler::ConnectionHandler;
+use basic::thread_pool::ThreadPool;
+use basic::connection_handler::ConnectionHandler;
 
 fn main() {
     let listener: TcpListener = TcpListener::bind("127.0.0.1:7878").unwrap();
