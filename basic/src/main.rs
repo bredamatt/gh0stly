@@ -1,18 +1,15 @@
-use std::net::{TcpListener, TcpStream};
-use std::io::prelude::*;
+mod connection_handler;
 
-fn handle_connection(mut stream: TcpStream) {
-    let mut buffer = [0; 1024];
-    stream.read(&mut buffer).unwrap();
-    println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
-}
+use std::net::TcpListener;
+use connection_handler::connection_handler::ConnectionHandler;
 
 fn main() {
     let listener: TcpListener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let connection_handler: ConnectionHandler = ConnectionHandler::new();
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
-        handle_connection(stream);
+        connection_handler.handle_connection(stream);
     }
 
 }
