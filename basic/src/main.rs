@@ -11,5 +11,4 @@ fn main() {
         let stream = stream.unwrap();
         connection_handler.handle_connection(stream);
     }
-
 }
