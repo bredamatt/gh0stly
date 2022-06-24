@@ -10,19 +10,33 @@ pub mod connection_handler {
             ConnectionHandler {}
         }
 
+        fn request_handler(&self, buffer: &[u8]) -> String {
+            let get = b"GET / HTTP/1.1\r\n";
+            if buffer.starts_with(get) {
+                let contents = fs::read_to_string("hello.html").unwrap();
+                let response = format!(
+                    "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
+                    contents.len(), contents
+                );
+                response
+            } else {
+                let contents = fs::read_to_string("404.html").unwrap();
+                let response = format!(
+                    "HTTP/1.1 404 NOT FOUND\r\nContent-Length: {}\r\n\r\n{}",
+                    contents.len(), contents
+                );
+                response
+            }
+        }
+
         pub fn handle_connection(&self, mut stream: TcpStream) {
             let mut buffer = [0; 1024];
             stream.read(&mut buffer).unwrap();
             // println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
-            
-            
-            let contents = fs::read_to_string("hello.html").unwrap();
-            
-            let response = format!(
-                "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
-                contents.len(), contents
-            );
 
+            // request handler
+            let response = self.request_handler(&buffer[..]);
+            
             stream.write(response.as_bytes()).unwrap();
             stream.flush().unwrap();
         }
