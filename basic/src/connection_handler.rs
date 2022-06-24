@@ -21,7 +21,7 @@ pub mod connection_handler {
                 ("HTTP/1.1 200 OK", "hello.html")
             } else if buffer.starts_with(sleep) {
                 thread::sleep(Duration::from_secs(5));
-                ("HTTP/1.,1 200 OK", "hello.html")
+                ("HTTP/1.1 200 OK", "hello.html")
             } else {
                 ("HTTP/1.1 404 Not Found", "404.html")
             };
